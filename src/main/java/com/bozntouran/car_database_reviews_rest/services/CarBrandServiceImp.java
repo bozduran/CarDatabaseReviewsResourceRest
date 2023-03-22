@@ -28,7 +28,7 @@ public class CarBrandServiceImp implements CarBrandService{
 
         CarBrandDTO carBrandDTO = carBrandMapper.carBrandToCarBrandDto(
                 carBrandRepository.getCarBrandById(id));
-        return Optional.of(carBrandDTO);
+        return Optional.ofNullable(Optional.ofNullable(carBrandDTO).orElse(null));
     }
 
     @Override
