@@ -31,7 +31,8 @@ public class CarModelController {
     public ResponseEntity addNewModel(@PathVariable("carBrandName")String carBrandName,
                                       @Validated @RequestBody CarModelDTO carModelDto){
 
-        CarBrandDTO carBrandDTO =carBrandService.getCarBrandByName(carBrandName);
+        CarBrandDTO carBrandDTO = carBrandService.getAllBrands(
+                carBrandName, null, null).get(0);
         var savedCarBrand = carBrandService.updateCarBRandByID(carBrandDTO.getId(), carBrandDTO);
 
         return new ResponseEntity(HttpStatus.CREATED);

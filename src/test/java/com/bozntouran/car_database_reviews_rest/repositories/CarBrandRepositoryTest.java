@@ -9,7 +9,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.Rollback;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+
 @DataJpaTest
 class CarBrandRepositoryTest {
 
@@ -24,11 +24,11 @@ class CarBrandRepositoryTest {
     @Transactional
     @Test
     void saveCarBrand(){
-        CarBrand savedCarmodel = carBrandRepository.save(CarBrand.builder()
+        CarBrand savedCarModel = carBrandRepository.save(CarBrand.builder()
                         .brandName("Something")
                 .build());
 
-        assertThat(savedCarmodel.getId()).isNotNull();
+        assertThat(savedCarModel.getId()).isNotNull();
 
     }
 

@@ -5,11 +5,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Setter;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
@@ -27,6 +26,10 @@ public class CarBrandDTO implements Serializable {
     @NotBlank
     private  String countryOfOrigin;
     @Min(value = 1800)
-    private  Integer creationYear;
+    private  Integer yearOfFoundation;
 //    private  Set<CarModelDTO> models ;
+
+    private LocalDateTime createdDate;
+
+    private LocalDateTime updateDate;
 }

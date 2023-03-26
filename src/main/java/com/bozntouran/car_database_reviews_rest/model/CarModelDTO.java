@@ -5,8 +5,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
@@ -23,5 +25,13 @@ public class CarModelDTO implements Serializable {
     private  String modelName;
     @Min(value = 1800)
     private  Integer yearOfProduction;
+
+    private String drive;
+    private String fuelType;
+    private String transmision;
+    private String carType;
+
+    private LocalDateTime createdDate;
+    private LocalDateTime updateDate;
 
 }

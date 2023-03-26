@@ -1,9 +1,12 @@
 package com.bozntouran.car_database_reviews_rest.services;
 
 import com.bozntouran.car_database_reviews_rest.controller.NotFoundException;
+import com.bozntouran.car_database_reviews_rest.entities.CarBrand;
 import com.bozntouran.car_database_reviews_rest.entities.CarModel;
+import com.bozntouran.car_database_reviews_rest.mappers.CarBrandMapper;
 import com.bozntouran.car_database_reviews_rest.model.CarBrandDTO;
 import lombok.Getter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -14,21 +17,23 @@ public class CarBrandServiceForMock implements CarBrandService{
 
     private final Map<UUID, CarBrandDTO> carBrandDTOMap;
 
+
     public CarBrandServiceForMock(){
         this.carBrandDTOMap = new HashMap<>();
+
 
         System.out.println("PostConstruct Data bootstrapping.");
         CarBrandDTO ferrari = CarBrandDTO.builder()
                 .id(UUID.randomUUID())
                 .brandName("Ferrari")
                 .countryOfOrigin("Italy")
-                .creationYear(1943)
+                .yearOfFoundation(1943)
                 .build();
         CarBrandDTO ford = CarBrandDTO.builder()
                 .id(UUID.randomUUID())
                 .brandName("Ford")
                 .countryOfOrigin("United States")
-                .creationYear(1903)
+                .yearOfFoundation(1903)
                 .build();
 
 
@@ -52,15 +57,11 @@ public class CarBrandServiceForMock implements CarBrandService{
 
     @Override
     public Optional<CarBrandDTO> getCarBrandByID(UUID id) {
-        CarBrandDTO carBrandDTO = this.carBrandDTOMap.get(id);
-        if (carBrandDTO == null){
-            throw new NotFoundException();
-        }
-        return Optional.of(carBrandDTO);
+        return Optional.of(carBrandDTOMap.get(id));
     }
 
     @Override
-    public CarBrandDTO getCarBrandByName(String carBrandName) {
+    public List<CarBrand> getCarBrandByName(String carBrandName) {
         CarBrandDTO carBrandDTO = null;
         for (CarBrandDTO carBrandDto:carBrandDTOMap.values()) {
             if (carBrandDto.getId().equals(carBrandName)){
@@ -71,11 +72,15 @@ public class CarBrandServiceForMock implements CarBrandService{
             throw new NotFoundException();
         }
 
-        return carBrandDTO;
+        return List.of(CarBrand.builder()
+                .brandName(carBrandDTO.getBrandName())
+                        .yearOfFoundation(carBrandDTO.getYearOfFoundation())
+                        .countryOfOrigin(carBrandDTO.getCountryOfOrigin())
+                .build());
     }
 
     @Override
-    public List<CarBrandDTO> getAllBrands() {
+    public List<CarBrandDTO> getAllBrands(String carBrand, String countryOfOrigin, Integer yearOfFoundation) {
         return new ArrayList<>(this.carBrandDTOMap.values());
     }
 
@@ -91,7 +96,7 @@ public class CarBrandServiceForMock implements CarBrandService{
 
     @Override
     public boolean deleteCarBrandByID(UUID carBrandID) {
-        return false;
+        return true;
     }
 
     @Override
@@ -117,7 +122,36 @@ public class CarBrandServiceForMock implements CarBrandService{
             carBrandDTORetreived.setCountryOfOrigin(carBrandDTO.getCountryOfOrigin());
         }
 
-
         return Optional.of(carBrandDTORetreived);
+    }
+
+    @Override
+    public List<CarBrand> getCarBrandByYearOfFoundation(Integer yearoffoundation) {
+        return null;
+    }
+
+    @Override
+    public List<CarBrand> getCarBrandByCountryOfOrigin(String countryOfOrigin) {
+        return null;
+    }
+
+    @Override
+    public List<CarBrand> getCarBrandByBrandNameAndYearOfFoundation(String carBrandName, Integer yearOfFoundation) {
+        return null;
+    }
+
+    @Override
+    public List<CarBrand> getCarBrandByBrandNameAndCountryOfOrigin(String carBrandName, String countryOfOrigigin) {
+        return null;
+    }
+
+    @Override
+    public List<CarBrand> getCarBrandByYearOfFoundationAndCountryOfOrigin(Integer yearOfFoundation, String countryOfOrigin) {
+        return null;
+    }
+
+    @Override
+    public List<CarBrand> getCarBrandByBrandNameAndCountryOfOriginAndYearOfFoundation(String carBrand, String countryOfOrigin, Integer yearOfFoundation) {
+        return null;
     }
 }

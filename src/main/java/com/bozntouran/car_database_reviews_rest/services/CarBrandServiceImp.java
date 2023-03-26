@@ -1,5 +1,6 @@
 package com.bozntouran.car_database_reviews_rest.services;
 
+import com.bozntouran.car_database_reviews_rest.entities.CarBrand;
 import com.bozntouran.car_database_reviews_rest.mappers.CarBrandMapper;
 import com.bozntouran.car_database_reviews_rest.model.CarBrandDTO;
 import com.bozntouran.car_database_reviews_rest.repositories.CarBrandRepository;
@@ -7,6 +8,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -32,17 +34,39 @@ public class CarBrandServiceImp implements CarBrandService{
     }
 
     @Override
-    public CarBrandDTO getCarBrandByName(String carBrandName) {
-        CarBrandDTO carBrandDTO = carBrandMapper.carBrandToCarBrandDto(
-                carBrandRepository.getCarBrandByBrandName(carBrandName));
-        return carBrandDTO;
+    public List<CarBrand> getCarBrandByName(String carBrandName) {
+        return carBrandRepository.getCarBrandByBrandName(carBrandName);
     }
 
+
+
+
     @Override
-    public List<CarBrandDTO> getAllBrands() {
-        return carBrandRepository.findAll()
-                .stream()
-                .map(carBrandMapper::carBrandToCarBrandDto)
+    public List<CarBrandDTO> getAllBrands(String carBrand, String countryOfOrigin, Integer yearOfFoundation) {
+        List<CarBrand> carBrands = new ArrayList<>();
+        if(carBrand == null && countryOfOrigin == null && yearOfFoundation == null) {
+            carBrands = carBrandRepository.findAll();
+        } else if(carBrand != null && countryOfOrigin == null && yearOfFoundation == null) {
+            carBrands = getCarBrandByName(carBrand);
+        } else if(carBrand == null && countryOfOrigin != null && yearOfFoundation == null) {
+            carBrands = getCarBrandByCountryOfOrigin(countryOfOrigin);
+        } else if(carBrand == null && countryOfOrigin == null && yearOfFoundation != null) {
+            carBrands = getCarBrandByYearOfFoundation(yearOfFoundation);
+        } else if(carBrand != null && countryOfOrigin != null && yearOfFoundation == null) {
+            carBrands = getCarBrandByBrandNameAndCountryOfOrigin(carBrand, countryOfOrigin);
+        } else if(carBrand != null && countryOfOrigin == null && yearOfFoundation != null) {
+            carBrands = getCarBrandByBrandNameAndYearOfFoundation(carBrand, yearOfFoundation);
+        } else if(carBrand == null && countryOfOrigin != null && yearOfFoundation != null) {
+            carBrands = getCarBrandByYearOfFoundationAndCountryOfOrigin(yearOfFoundation, countryOfOrigin);
+        } else if(carBrand != null && countryOfOrigin != null && yearOfFoundation != null) {
+            carBrands = getCarBrandByBrandNameAndCountryOfOriginAndYearOfFoundation(carBrand, countryOfOrigin, yearOfFoundation);
+        }
+
+
+
+
+        return carBrands.stream()
+                .map(carBrandObject -> carBrandMapper.carBrandToCarBrandDto(carBrandObject))
                 .collect(Collectors.toList());
     }
 
@@ -77,7 +101,7 @@ public class CarBrandServiceImp implements CarBrandService{
         AtomicReference<Optional<CarBrandDTO>> atomicReference = new AtomicReference<>();
 
         carBrandRepository.findById(carBrandId).ifPresentOrElse(carBrand -> {
-            carBrand.setBrandName(carBrand.getBrandName());
+            carBrand.setBrandName(carBrandDTO.getBrandName());
             carBrand.setCountryOfOrigin(carBrandDTO.getCountryOfOrigin());
             atomicReference.set(Optional.of(carBrandMapper
                     .carBrandToCarBrandDto(carBrandRepository.save(carBrand))));
@@ -106,5 +130,36 @@ public class CarBrandServiceImp implements CarBrandService{
 
 
         return atomicReference.get();
+    }
+
+    @Override
+    public List<CarBrand> getCarBrandByYearOfFoundation(Integer yearOfFoundation) {
+        return carBrandRepository.getCarBrandByYearOfFoundation(yearOfFoundation);
+    }
+
+    @Override
+    public List<CarBrand> getCarBrandByCountryOfOrigin(String countryOfOrigin) {
+        return carBrandRepository.getCarBrandByCountryOfOrigin(countryOfOrigin);
+    }
+
+    @Override
+    public List<CarBrand> getCarBrandByBrandNameAndYearOfFoundation(String carBrandName, Integer yearOfFoundation) {
+        return carBrandRepository.getCarBrandByBrandNameAndYearOfFoundation(carBrandName,yearOfFoundation);
+    }
+
+    @Override
+    public List<CarBrand> getCarBrandByBrandNameAndCountryOfOrigin(String carBrandName, String countryOfOrigigin) {
+        return carBrandRepository.getCarBrandByBrandNameAndCountryOfOrigin(carBrandName,countryOfOrigigin);
+    }
+
+    @Override
+    public List<CarBrand> getCarBrandByYearOfFoundationAndCountryOfOrigin(Integer yearOfFoundation, String countryOfOrigin) {
+        return carBrandRepository.getCarBrandByYearOfFoundationAndCountryOfOrigin(yearOfFoundation,countryOfOrigin);
+    }
+
+    @Override
+    public List<CarBrand> getCarBrandByBrandNameAndCountryOfOriginAndYearOfFoundation
+            (String carBrand, String countryOfOrigin, Integer yearOfFoundation) {
+        return carBrandRepository.getCarBrandByBrandNameAndCountryOfOriginAndYearOfFoundation(carBrand, countryOfOrigin, yearOfFoundation);
     }
 }

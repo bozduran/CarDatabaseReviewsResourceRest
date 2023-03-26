@@ -4,7 +4,6 @@ package com.bozntouran.car_database_reviews_rest.controller;
 import com.bozntouran.car_database_reviews_rest.model.CarBrandDTO;
 import com.bozntouran.car_database_reviews_rest.services.CarBrandService;
 import com.bozntouran.car_database_reviews_rest.services.CarBrandServiceForMock;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,7 +34,7 @@ import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 @Slf4j
-@WebMvcTest
+@WebMvcTest(CarBrandController.class)
 class CarBrandControllerTest {
     private static final String CAR_BRAND = "/api/brand";
     private static final String CAR_BRAND_ID = CAR_BRAND + "/{carBrandId}";
@@ -72,8 +71,8 @@ class CarBrandControllerTest {
     void testPatchCarByID() throws Exception{
 
         CarBrandDTO carBrandDTO = CarBrandDTO.builder()
-                .id(carBrandServiceForMock.getAllBrands().get(0).getId())
-                .creationYear(null)
+                .id(carBrandServiceForMock.getAllBrands(null, null, null).get(0).getId())
+                .yearOfFoundation(null)
                 .brandName(null)
                 .countryOfOrigin(null)
                 .build();
@@ -96,7 +95,7 @@ class CarBrandControllerTest {
 
     @Test
     void testUpdateCarByID() throws Exception{
-        CarBrandDTO carBrandDTO = carBrandServiceForMock.getAllBrands().get(0);
+        CarBrandDTO carBrandDTO = carBrandServiceForMock.getAllBrands(null, null, null).get(0);
         System.out.println(carBrandDTO.getId());
         carBrandDTO.setBrandName("Ferrari version");
 
@@ -111,11 +110,11 @@ class CarBrandControllerTest {
 
     @Test
     void testCreate() throws Exception {
-        CarBrandDTO carBrandDTO = carBrandServiceForMock.getAllBrands().get(0);
+        CarBrandDTO carBrandDTO = carBrandServiceForMock.getAllBrands(null, null, null).get(0);
         carBrandDTO.setVersion(null);
         carBrandDTO.setId(null);
         given(carBrandService.saveNewCarBrand(any(CarBrandDTO.class)))
-                .willReturn(carBrandServiceForMock.getAllBrands().get(1));
+                .willReturn(carBrandServiceForMock.getAllBrands(null, null, null).get(1));
 
         mockMvc.perform(post(CAR_BRAND)
                 .accept(MediaType.APPLICATION_JSON)
@@ -127,7 +126,7 @@ class CarBrandControllerTest {
 
     @Test
     void testGetAllCarBrands() throws Exception {
-        given(carBrandService.getAllBrands()).willReturn(carBrandServiceForMock.getAllBrands());
+        given(carBrandService.getAllBrands(null, null, null)).willReturn(carBrandServiceForMock.getAllBrands(null, null, null));
 
         mockMvc.perform(get(CAR_BRAND)
                         .accept(MediaType.APPLICATION_JSON))
@@ -137,13 +136,14 @@ class CarBrandControllerTest {
 
     @Test
     void getCarBrandByIDNotFound() throws Exception{
+
         given(carBrandServiceForMock.getCarBrandByID(any(UUID.class))).willReturn(Optional.empty());
         mockMvc.perform(get(CAR_BRAND_ID,UUID.randomUUID()))
                 .andExpect(status().isNotFound());
     }
     @Test
     void getCarBrandByID() throws Exception{
-        CarBrandDTO carBrandDTO = carBrandServiceForMock.getAllBrands().get(0);
+        CarBrandDTO carBrandDTO = carBrandServiceForMock.getAllBrands(null, null, null).get(0);
 
         given(carBrandService.getCarBrandByID(any(UUID.class))  ).willReturn(Optional.of(carBrandDTO));
 

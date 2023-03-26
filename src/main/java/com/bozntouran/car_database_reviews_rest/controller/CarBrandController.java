@@ -2,7 +2,6 @@ package com.bozntouran.car_database_reviews_rest.controller;
 
 import com.bozntouran.car_database_reviews_rest.model.CarBrandDTO;
 import com.bozntouran.car_database_reviews_rest.services.CarBrandService;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -33,7 +32,7 @@ public class CarBrandController {
     @PutMapping(CAR_BRAND_ID)
     public ResponseEntity updatedCarBrand(@PathVariable("carBrandId") UUID  carBrandId, @Validated @RequestBody CarBrandDTO carBrandDTO){
 
-        if (carBrandService.updateCarBRandByID(carBrandId, carBrandDTO).isEmpty() ){
+        if ( carBrandService.updateCarBRandByID(carBrandId, carBrandDTO).isEmpty() ){
             throw new NotFoundException();
         }
         return new ResponseEntity(HttpStatus.ACCEPTED);
@@ -63,8 +62,11 @@ public class CarBrandController {
 
 
     @GetMapping(value = CAR_BRAND)
-    public List<CarBrandDTO> getAllCars(){
-        return carBrandService.getAllBrands();
+    public List<CarBrandDTO> getAllCars(@RequestParam(required = false) String brandName,
+                                        @RequestParam(required = false) String countryOfOrigin,
+                                        @RequestParam(required = false) Integer yearOfFoundation){
+        System.out.println(countryOfOrigin);
+        return carBrandService.getAllBrands(brandName, countryOfOrigin, yearOfFoundation);
     }
 
     @GetMapping(value = CAR_BRAND_ID)

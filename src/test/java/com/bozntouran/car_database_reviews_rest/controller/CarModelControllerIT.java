@@ -1,10 +1,8 @@
 package com.bozntouran.car_database_reviews_rest.controller;
 
 import com.bozntouran.car_database_reviews_rest.entities.CarBrand;
-import com.bozntouran.car_database_reviews_rest.entities.CarModel;
 import com.bozntouran.car_database_reviews_rest.mappers.CarBrandMapper;
 import com.bozntouran.car_database_reviews_rest.model.CarBrandDTO;
-import com.bozntouran.car_database_reviews_rest.model.CarModelDTO;
 import com.bozntouran.car_database_reviews_rest.repositories.CarBrandRepository;
 import com.bozntouran.car_database_reviews_rest.services.CarBrandService;
 import org.junit.jupiter.api.Test;
@@ -16,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.assertj.core.api.InstanceOfAssertFactories.predicate;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -43,7 +40,7 @@ public class CarModelControllerIT {
         CarBrandDTO carBrandDTO = CarBrandDTO.builder()
                 .brandName("Fiat")
                 .countryOfOrigin("Italy")
-                .creationYear(1990)
+                .yearOfFoundation(1990)
                 .build();
 
         ResponseEntity responseEntity = carBrandController.handlePost(carBrandDTO);
@@ -70,7 +67,7 @@ public class CarModelControllerIT {
     @Test
     public void getAllBrands(){
         List<CarBrand> carBrandsEntities = carBrandRepository.findAll();
-        List<CarBrandDTO> carBrands = carBrandService.getAllBrands();
+        List<CarBrandDTO> carBrands = carBrandService.getAllBrands(null, null, null);
         assertThat(carBrands.size()).isEqualTo(carBrandsEntities.size());
 
     }
@@ -80,7 +77,7 @@ public class CarModelControllerIT {
     @Test
     public void testForEmptyRepository(){
         carBrandRepository.deleteAll();
-        List<CarBrandDTO> carBrands = carBrandService.getAllBrands();
+        List<CarBrandDTO> carBrands = carBrandService.getAllBrands(null, null, null);
         assertThat(0).isEqualTo(carBrands.size());
     }
 
@@ -123,12 +120,13 @@ public class CarModelControllerIT {
         carBrandDTO.setBrandName(newName);
         carBrandDTO.setVersion(null);
 
-
+        System.out.println(carBrand.getId());
         ResponseEntity responseEntity = carBrandController.updatedCarBrand(carBrand.getId(),carBrandDTO);
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
-        //TODO : Check
+
         CarBrand carBrand1 = carBrandRepository.getCarBrandById(carBrand.getId());
+        System.out.println(carBrand1.getId());
         assertThat(carBrand1.getBrandName()).isEqualTo(newName);
 
 
