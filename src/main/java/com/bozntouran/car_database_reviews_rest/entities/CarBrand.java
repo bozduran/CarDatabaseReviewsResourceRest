@@ -12,6 +12,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -42,20 +44,16 @@ public class CarBrand {
     private Integer yearOfFoundation;
 
     @CreationTimestamp
+    @Column(updatable = false)
     private LocalDateTime createdDate;
     @UpdateTimestamp
     private LocalDateTime updateDate;
 
 
-/*
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "carBrand",cascade = CascadeType.ALL)
+
+    @Builder.Default
+    @OneToMany( mappedBy = "carBrand",cascade = CascadeType.ALL)
     private Set<CarModel> models = new HashSet<>();
 
-    public void addCarModelToBrand(CarModel carModel){
-
-        this.models.add(carModel);
-        carModel.setCarBrand(this);
-    }
-*/
 
 }

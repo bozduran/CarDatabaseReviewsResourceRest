@@ -3,10 +3,11 @@ package com.bozntouran.car_database_reviews_rest.services;
 import com.bozntouran.car_database_reviews_rest.controller.NotFoundException;
 import com.bozntouran.car_database_reviews_rest.entities.CarBrand;
 import com.bozntouran.car_database_reviews_rest.entities.CarModel;
-import com.bozntouran.car_database_reviews_rest.mappers.CarBrandMapper;
 import com.bozntouran.car_database_reviews_rest.model.CarBrandDTO;
 import lombok.Getter;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -16,7 +17,6 @@ import java.util.*;
 public class CarBrandServiceForMock implements CarBrandService{
 
     private final Map<UUID, CarBrandDTO> carBrandDTOMap;
-
 
     public CarBrandServiceForMock(){
         this.carBrandDTOMap = new HashMap<>();
@@ -53,15 +53,13 @@ public class CarBrandServiceForMock implements CarBrandService{
 
     }
 
-
-
     @Override
     public Optional<CarBrandDTO> getCarBrandByID(UUID id) {
         return Optional.of(carBrandDTOMap.get(id));
     }
 
     @Override
-    public List<CarBrand> getCarBrandByName(String carBrandName) {
+    public Page<CarBrand> getCarBrandByName(String carBrandName, Pageable pageable) {
         CarBrandDTO carBrandDTO = null;
         for (CarBrandDTO carBrandDto:carBrandDTOMap.values()) {
             if (carBrandDto.getId().equals(carBrandName)){
@@ -72,16 +70,22 @@ public class CarBrandServiceForMock implements CarBrandService{
             throw new NotFoundException();
         }
 
-        return List.of(CarBrand.builder()
-                .brandName(carBrandDTO.getBrandName())
+        List<CarBrand> carBrands = new ArrayList<>();
+        carBrands.add(
+                CarBrand.builder()
+                        .brandName(carBrandDTO.getBrandName())
                         .yearOfFoundation(carBrandDTO.getYearOfFoundation())
                         .countryOfOrigin(carBrandDTO.getCountryOfOrigin())
-                .build());
+                        .build());
+
+        return new PageImpl<>(carBrands);
+
     }
 
+
     @Override
-    public List<CarBrandDTO> getAllBrands(String carBrand, String countryOfOrigin, Integer yearOfFoundation) {
-        return new ArrayList<>(this.carBrandDTOMap.values());
+    public Page<CarBrandDTO> getAllBrands(String carBrand, String countryOfOrigin, Integer yearOfFoundation, Integer pageNumber, Integer pageSize) {
+        return new PageImpl<>(new ArrayList<>(this.carBrandDTOMap.values()));
     }
 
     @Override
@@ -126,32 +130,33 @@ public class CarBrandServiceForMock implements CarBrandService{
     }
 
     @Override
-    public List<CarBrand> getCarBrandByYearOfFoundation(Integer yearoffoundation) {
+    public Page<CarBrand> getCarBrandByYearOfFoundation(Integer yearoffoundation, Pageable pageable) {
         return null;
     }
 
     @Override
-    public List<CarBrand> getCarBrandByCountryOfOrigin(String countryOfOrigin) {
+    public Page<CarBrand> getCarBrandByCountryOfOrigin(String countryOfOrigin, Pageable pageable) {
+        return null;
+    }
+
+
+    @Override
+    public Page<CarBrand> getCarBrandByBrandNameAndYearOfFoundation(String carBrandName, Integer yearOfFoundation, org.springframework.data.domain.Pageable pageable) {
         return null;
     }
 
     @Override
-    public List<CarBrand> getCarBrandByBrandNameAndYearOfFoundation(String carBrandName, Integer yearOfFoundation) {
+    public Page<CarBrand> getCarBrandByBrandNameAndCountryOfOrigin(String carBrandName, String countryOfOrigigin, org.springframework.data.domain.Pageable pageable) {
         return null;
     }
 
     @Override
-    public List<CarBrand> getCarBrandByBrandNameAndCountryOfOrigin(String carBrandName, String countryOfOrigigin) {
+    public Page<CarBrand> getCarBrandByYearOfFoundationAndCountryOfOrigin(Integer yearOfFoundation, String countryOfOrigin, org.springframework.data.domain.Pageable pageable) {
         return null;
     }
 
     @Override
-    public List<CarBrand> getCarBrandByYearOfFoundationAndCountryOfOrigin(Integer yearOfFoundation, String countryOfOrigin) {
-        return null;
-    }
-
-    @Override
-    public List<CarBrand> getCarBrandByBrandNameAndCountryOfOriginAndYearOfFoundation(String carBrand, String countryOfOrigin, Integer yearOfFoundation) {
+    public Page<CarBrand> getCarBrandByBrandNameAndCountryOfOriginAndYearOfFoundation(String carBrand, String countryOfOrigin, Integer yearOfFoundation, org.springframework.data.domain.Pageable pageable) {
         return null;
     }
 }

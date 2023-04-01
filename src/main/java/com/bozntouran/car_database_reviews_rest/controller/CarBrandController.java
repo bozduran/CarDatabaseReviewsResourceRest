@@ -3,13 +3,13 @@ package com.bozntouran.car_database_reviews_rest.controller;
 import com.bozntouran.car_database_reviews_rest.model.CarBrandDTO;
 import com.bozntouran.car_database_reviews_rest.services.CarBrandService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -62,11 +62,13 @@ public class CarBrandController {
 
 
     @GetMapping(value = CAR_BRAND)
-    public List<CarBrandDTO> getAllCars(@RequestParam(required = false) String brandName,
+    public Page<CarBrandDTO> getAllCars(@RequestParam(required = false) String brandName,
                                         @RequestParam(required = false) String countryOfOrigin,
-                                        @RequestParam(required = false) Integer yearOfFoundation){
+                                        @RequestParam(required = false) Integer yearOfFoundation,
+                                        @RequestParam(required = false) Integer pageNumber,
+                                        @RequestParam(required = false) Integer pageSize){
         System.out.println(countryOfOrigin);
-        return carBrandService.getAllBrands(brandName, countryOfOrigin, yearOfFoundation);
+        return carBrandService.getAllBrands(brandName, countryOfOrigin, yearOfFoundation, pageNumber, pageSize);
     }
 
     @GetMapping(value = CAR_BRAND_ID)

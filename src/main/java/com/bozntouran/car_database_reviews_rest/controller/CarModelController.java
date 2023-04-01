@@ -1,7 +1,5 @@
 package com.bozntouran.car_database_reviews_rest.controller;
 
-import com.bozntouran.car_database_reviews_rest.mappers.CarBrandMapper;
-import com.bozntouran.car_database_reviews_rest.mappers.CarModelMapper;
 import com.bozntouran.car_database_reviews_rest.model.CarBrandDTO;
 import com.bozntouran.car_database_reviews_rest.model.CarModelDTO;
 import com.bozntouran.car_database_reviews_rest.services.CarBrandService;
@@ -15,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -32,7 +30,7 @@ public class CarModelController {
                                       @Validated @RequestBody CarModelDTO carModelDto){
 
         CarBrandDTO carBrandDTO = carBrandService.getAllBrands(
-                carBrandName, null, null).get(0);
+                carBrandName, null, null, 1, 10).getContent().get(0);
         var savedCarBrand = carBrandService.updateCarBRandByID(carBrandDTO.getId(), carBrandDTO);
 
         return new ResponseEntity(HttpStatus.CREATED);

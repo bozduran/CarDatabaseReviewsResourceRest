@@ -5,24 +5,28 @@ import com.bozntouran.car_database_reviews_rest.mappers.CarBrandMapper;
 import com.bozntouran.car_database_reviews_rest.model.CarBrandDTO;
 import com.bozntouran.car_database_reviews_rest.repositories.CarBrandRepository;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Pageable;
 
-import java.util.ArrayList;
-import java.util.List;
+
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
 
 @Service
 @Primary
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CarBrandServiceImp implements CarBrandService{
-
+    private static final int DEFAULT_PAGE = 0;
+    private static final int DEFAULT_PAGE_SIZE = 10;
     private final CarBrandRepository carBrandRepository;
-    private CarBrandMapper carBrandMapper;
-
+    private final CarBrandMapper carBrandMapper;
 
 
     @Override
@@ -34,40 +38,43 @@ public class CarBrandServiceImp implements CarBrandService{
     }
 
     @Override
-    public List<CarBrand> getCarBrandByName(String carBrandName) {
-        return carBrandRepository.getCarBrandByBrandName(carBrandName);
+    public Page<CarBrand> getCarBrandByName(String carBrandName, Pageable pageable) {
+        return carBrandRepository.getCarBrandByBrandName(carBrandName, null);
     }
 
-
-
-
     @Override
-    public List<CarBrandDTO> getAllBrands(String carBrand, String countryOfOrigin, Integer yearOfFoundation) {
-        List<CarBrand> carBrands = new ArrayList<>();
+    public Page<CarBrandDTO> getAllBrands(String carBrand, String countryOfOrigin, Integer yearOfFoundation, Integer pageNumber, Integer pageSize) {
+
+        PageRequest pageRequest = pageRequestBuilder(pageNumber, pageSize);
+
+        Page<CarBrand> carBrandPage ;
+
         if(carBrand == null && countryOfOrigin == null && yearOfFoundation == null) {
-            carBrands = carBrandRepository.findAll();
+            carBrandPage = carBrandRepository.findAll(pageRequest);
         } else if(carBrand != null && countryOfOrigin == null && yearOfFoundation == null) {
-            carBrands = getCarBrandByName(carBrand);
+            carBrandPage = getCarBrandByName(carBrand, pageRequest);
         } else if(carBrand == null && countryOfOrigin != null && yearOfFoundation == null) {
-            carBrands = getCarBrandByCountryOfOrigin(countryOfOrigin);
+            carBrandPage = getCarBrandByCountryOfOrigin(countryOfOrigin, pageRequest);
         } else if(carBrand == null && countryOfOrigin == null && yearOfFoundation != null) {
-            carBrands = getCarBrandByYearOfFoundation(yearOfFoundation);
+            carBrandPage = getCarBrandByYearOfFoundation(yearOfFoundation, pageRequest);
         } else if(carBrand != null && countryOfOrigin != null && yearOfFoundation == null) {
-            carBrands = getCarBrandByBrandNameAndCountryOfOrigin(carBrand, countryOfOrigin);
+            carBrandPage = getCarBrandByBrandNameAndCountryOfOrigin(carBrand, countryOfOrigin, pageRequest);
         } else if(carBrand != null && countryOfOrigin == null && yearOfFoundation != null) {
-            carBrands = getCarBrandByBrandNameAndYearOfFoundation(carBrand, yearOfFoundation);
+            carBrandPage = getCarBrandByBrandNameAndYearOfFoundation(carBrand, yearOfFoundation, pageRequest);
         } else if(carBrand == null && countryOfOrigin != null && yearOfFoundation != null) {
-            carBrands = getCarBrandByYearOfFoundationAndCountryOfOrigin(yearOfFoundation, countryOfOrigin);
-        } else if(carBrand != null && countryOfOrigin != null && yearOfFoundation != null) {
-            carBrands = getCarBrandByBrandNameAndCountryOfOriginAndYearOfFoundation(carBrand, countryOfOrigin, yearOfFoundation);
+            carBrandPage = getCarBrandByYearOfFoundationAndCountryOfOrigin(yearOfFoundation, countryOfOrigin, pageRequest);
+        } else{
+            carBrandPage = getCarBrandByBrandNameAndCountryOfOriginAndYearOfFoundation(carBrand, countryOfOrigin, yearOfFoundation, pageRequest);
         }
 
 
 
-
-        return carBrands.stream()
+        return carBrandPage.map(carBrandMapper::carBrandToCarBrandDto);
+/*
+        return carBrandPage.stream()
                 .map(carBrandObject -> carBrandMapper.carBrandToCarBrandDto(carBrandObject))
                 .collect(Collectors.toList());
+  */
     }
 
 
@@ -133,33 +140,59 @@ public class CarBrandServiceImp implements CarBrandService{
     }
 
     @Override
-    public List<CarBrand> getCarBrandByYearOfFoundation(Integer yearOfFoundation) {
-        return carBrandRepository.getCarBrandByYearOfFoundation(yearOfFoundation);
+    public Page<CarBrand> getCarBrandByYearOfFoundation(Integer yearOfFoundation, org.springframework.data.domain.Pageable pageable) {
+        return carBrandRepository.getCarBrandByYearOfFoundation(yearOfFoundation, pageable);
     }
 
     @Override
-    public List<CarBrand> getCarBrandByCountryOfOrigin(String countryOfOrigin) {
-        return carBrandRepository.getCarBrandByCountryOfOrigin(countryOfOrigin);
+    public Page<CarBrand> getCarBrandByCountryOfOrigin(String countryOfOrigin, Pageable pageable) {
+        return carBrandRepository.getCarBrandByCountryOfOrigin(countryOfOrigin, pageable);
     }
 
     @Override
-    public List<CarBrand> getCarBrandByBrandNameAndYearOfFoundation(String carBrandName, Integer yearOfFoundation) {
-        return carBrandRepository.getCarBrandByBrandNameAndYearOfFoundation(carBrandName,yearOfFoundation);
+    public Page<CarBrand> getCarBrandByBrandNameAndYearOfFoundation(String carBrandName, Integer yearOfFoundation, Pageable pageable) {
+        return carBrandRepository.getCarBrandByBrandNameAndYearOfFoundation(carBrandName,yearOfFoundation, pageable);
     }
 
     @Override
-    public List<CarBrand> getCarBrandByBrandNameAndCountryOfOrigin(String carBrandName, String countryOfOrigigin) {
-        return carBrandRepository.getCarBrandByBrandNameAndCountryOfOrigin(carBrandName,countryOfOrigigin);
+    public Page<CarBrand> getCarBrandByBrandNameAndCountryOfOrigin(String carBrandName, String countryOfOrigigin, Pageable pageable) {
+        return carBrandRepository.getCarBrandByBrandNameAndCountryOfOrigin(carBrandName,countryOfOrigigin, pageable);
     }
 
     @Override
-    public List<CarBrand> getCarBrandByYearOfFoundationAndCountryOfOrigin(Integer yearOfFoundation, String countryOfOrigin) {
-        return carBrandRepository.getCarBrandByYearOfFoundationAndCountryOfOrigin(yearOfFoundation,countryOfOrigin);
+    public Page<CarBrand> getCarBrandByYearOfFoundationAndCountryOfOrigin(Integer yearOfFoundation, String countryOfOrigin, Pageable pageable) {
+        return carBrandRepository.getCarBrandByYearOfFoundationAndCountryOfOrigin(yearOfFoundation,countryOfOrigin, pageable);
     }
 
     @Override
-    public List<CarBrand> getCarBrandByBrandNameAndCountryOfOriginAndYearOfFoundation
-            (String carBrand, String countryOfOrigin, Integer yearOfFoundation) {
-        return carBrandRepository.getCarBrandByBrandNameAndCountryOfOriginAndYearOfFoundation(carBrand, countryOfOrigin, yearOfFoundation);
+    public Page<CarBrand> getCarBrandByBrandNameAndCountryOfOriginAndYearOfFoundation
+            (String carBrand, String countryOfOrigin, Integer yearOfFoundation, Pageable pageable) {
+        return carBrandRepository.getCarBrandByBrandNameAndCountryOfOriginAndYearOfFoundation(
+                carBrand, countryOfOrigin, yearOfFoundation, pageable);
+    }
+
+    public PageRequest pageRequestBuilder(Integer pageNumber, Integer pageSize){
+        int queryPageSize ;
+        int queryPageNumber;
+
+        if (pageNumber != null && pageNumber > 0){
+            queryPageNumber = pageNumber - 1;
+        }else{
+            queryPageNumber = DEFAULT_PAGE;
+        }
+
+        if (pageSize != null && pageSize > 0){
+            if (pageSize > 250){
+                queryPageSize = 250;
+            }else{
+                queryPageSize = pageSize;
+            }
+        }else{
+            queryPageSize = DEFAULT_PAGE_SIZE;
+        }
+
+        Sort sort = Sort.by("brandName");
+
+        return PageRequest.of(queryPageNumber, queryPageSize, sort);
     }
 }

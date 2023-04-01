@@ -8,6 +8,7 @@ import com.bozntouran.car_database_reviews_rest.services.CarBrandService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -67,8 +68,8 @@ public class CarModelControllerIT {
     @Test
     public void getAllBrands(){
         List<CarBrand> carBrandsEntities = carBrandRepository.findAll();
-        List<CarBrandDTO> carBrands = carBrandService.getAllBrands(null, null, null);
-        assertThat(carBrands.size()).isEqualTo(carBrandsEntities.size());
+        Page<CarBrandDTO> carBrands = carBrandService.getAllBrands(null, null, null, 1, 10);
+        assertThat(carBrands.getContent().size()).isEqualTo(10);
 
     }
 
@@ -77,8 +78,8 @@ public class CarModelControllerIT {
     @Test
     public void testForEmptyRepository(){
         carBrandRepository.deleteAll();
-        List<CarBrandDTO> carBrands = carBrandService.getAllBrands(null, null, null);
-        assertThat(0).isEqualTo(carBrands.size());
+        Page<CarBrandDTO> carBrands = carBrandService.getAllBrands(null, null, null, 1, 10);
+        assertThat(0).isEqualTo(carBrands.getContent().size());
     }
 
     @Rollback

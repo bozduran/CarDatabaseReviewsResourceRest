@@ -2,16 +2,17 @@ package com.bozntouran.car_database_reviews_rest.services;
 
 import com.bozntouran.car_database_reviews_rest.entities.CarBrand;
 import com.bozntouran.car_database_reviews_rest.model.CarBrandDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 
 public interface CarBrandService {
     Optional<CarBrandDTO> getCarBrandByID(UUID id);
-    List<CarBrand> getCarBrandByName(String carBrandName);
-    List<CarBrandDTO> getAllBrands(String carBrand, String countryOfOrigin, Integer yearOfFoundation);
+    Page<CarBrand> getCarBrandByName(String carBrandName, Pageable pageable);
+    Page<CarBrandDTO> getAllBrands(String carBrand, String countryOfOrigin, Integer yearOfFoundation, Integer pageNumber, Integer pageSize);
     CarBrandDTO getByBrandName();
     CarBrandDTO saveNewCarBrand(CarBrandDTO carBrandDTO);
 
@@ -21,15 +22,15 @@ public interface CarBrandService {
 
     Optional<CarBrandDTO> patchCarBrandByID(UUID carBrandId, CarBrandDTO carBrandDTO);
 
-    List<CarBrand> getCarBrandByYearOfFoundation(Integer yearoffoundation);
-    List<CarBrand> getCarBrandByCountryOfOrigin(String countryOfOrigin);
+    Page<CarBrand> getCarBrandByYearOfFoundation(Integer yearoffoundation, Pageable pageable);
+    Page<CarBrand> getCarBrandByCountryOfOrigin(String countryOfOrigin, Pageable pageable);
 
-    List<CarBrand> getCarBrandByBrandNameAndYearOfFoundation(String carBrandName, Integer yearOfFoundation);
+    Page<CarBrand> getCarBrandByBrandNameAndYearOfFoundation(String carBrandName, Integer yearOfFoundation, Pageable pageable);
 
-    List<CarBrand> getCarBrandByBrandNameAndCountryOfOrigin(String carBrandName, String countryOfOrigin);
+    Page<CarBrand> getCarBrandByBrandNameAndCountryOfOrigin(String carBrandName, String countryOfOrigin, Pageable pageable);
 
-    List<CarBrand> getCarBrandByYearOfFoundationAndCountryOfOrigin( Integer yearOfFoundation, String countryOfOrigin);
+    Page<CarBrand> getCarBrandByYearOfFoundationAndCountryOfOrigin(Integer yearOfFoundation, String countryOfOrigin, Pageable pageable);
 
-    List<CarBrand> getCarBrandByBrandNameAndCountryOfOriginAndYearOfFoundation(String carBrand, String countryOfOrigin, Integer yearOfFoundation);
+    Page<CarBrand> getCarBrandByBrandNameAndCountryOfOriginAndYearOfFoundation(String carBrand, String countryOfOrigin, Integer yearOfFoundation, Pageable pageable);
 
 }
