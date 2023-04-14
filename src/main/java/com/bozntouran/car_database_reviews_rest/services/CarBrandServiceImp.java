@@ -43,7 +43,11 @@ public class CarBrandServiceImp implements CarBrandService{
     }
 
     @Override
-    public Page<CarBrandDTO> getAllBrands(String carBrand, String countryOfOrigin, Integer yearOfFoundation, Integer pageNumber, Integer pageSize) {
+    public Page<CarBrandDTO> getAllBrands(String carBrand,
+                                          String countryOfOrigin,
+                                          Integer yearOfFoundation,
+                                          Integer pageNumber,
+                                          Integer pageSize) {
 
         PageRequest pageRequest = pageRequestBuilder(pageNumber, pageSize);
 
@@ -70,11 +74,7 @@ public class CarBrandServiceImp implements CarBrandService{
 
 
         return carBrandPage.map(carBrandMapper::carBrandToCarBrandDto);
-/*
-        return carBrandPage.stream()
-                .map(carBrandObject -> carBrandMapper.carBrandToCarBrandDto(carBrandObject))
-                .collect(Collectors.toList());
-  */
+
     }
 
 

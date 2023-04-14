@@ -52,7 +52,7 @@ public class CarBrand {
 
 
     @Builder.Default
-    @OneToMany( mappedBy = "carBrand",cascade = CascadeType.ALL)
+    @OneToMany( mappedBy = "carBrand",cascade = CascadeType.PERSIST)
     private Set<CarModel> models = new HashSet<>();
 
 

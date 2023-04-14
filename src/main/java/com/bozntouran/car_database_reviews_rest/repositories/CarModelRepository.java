@@ -9,4 +9,7 @@ import java.util.UUID;
 @Repository
 public interface CarModelRepository extends JpaRepository<CarModel, UUID> {
     CarModel getCarModelById(UUID id);
+
+    boolean existsById(UUID id);
+
 }

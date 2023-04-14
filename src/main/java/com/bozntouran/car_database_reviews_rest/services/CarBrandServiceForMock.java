@@ -21,8 +21,6 @@ public class CarBrandServiceForMock implements CarBrandService{
     public CarBrandServiceForMock(){
         this.carBrandDTOMap = new HashMap<>();
 
-
-        System.out.println("PostConstruct Data bootstrapping.");
         CarBrandDTO ferrari = CarBrandDTO.builder()
                 .id(UUID.randomUUID())
                 .brandName("Ferrari")
@@ -107,7 +105,6 @@ public class CarBrandServiceForMock implements CarBrandService{
     public Optional<CarBrandDTO> updateCarBRandByID(UUID carBrandId, CarBrandDTO carBrandDTO) {
 
         CarBrandDTO carBrandDTOtoUpdate = carBrandDTOMap.get(carBrandId);
-        System.out.println(carBrandDTOtoUpdate.getId());
 
         carBrandDTOtoUpdate.setBrandName( carBrandDTO.getBrandName());
         carBrandDTOtoUpdate.setCountryOfOrigin( carBrandDTO.getCountryOfOrigin());

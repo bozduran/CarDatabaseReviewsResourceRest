@@ -93,8 +93,8 @@ public class BootstrapData implements CommandLineRunner {
                         .carBrand(carBrand)
                         .build());
                 count++;
-                if (count == 100) {
-                    System.out.println(100);
+                if (count == 500) {
+                    log.info("Inserted 100 models.");
                     break;
                 }
             }

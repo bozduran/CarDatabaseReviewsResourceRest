@@ -3,6 +3,7 @@ package com.bozntouran.car_database_reviews_rest.controller;
 import com.bozntouran.car_database_reviews_rest.model.CarBrandDTO;
 import com.bozntouran.car_database_reviews_rest.services.CarBrandService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -11,7 +12,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
-
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class CarBrandController {
@@ -26,7 +27,6 @@ public class CarBrandController {
         carBrandService.patchCarBrandByID(carBrandId,carBrandDTO);
 
         return new ResponseEntity(HttpStatus.NO_CONTENT);
-
     }
 
     @PutMapping(CAR_BRAND_ID)
@@ -67,19 +67,17 @@ public class CarBrandController {
                                         @RequestParam(required = false) Integer yearOfFoundation,
                                         @RequestParam(required = false) Integer pageNumber,
                                         @RequestParam(required = false) Integer pageSize){
-        System.out.println(countryOfOrigin);
-        return carBrandService.getAllBrands(brandName, countryOfOrigin, yearOfFoundation, pageNumber, pageSize);
+        return carBrandService.getAllBrands(brandName,
+                countryOfOrigin,
+                yearOfFoundation,
+                pageNumber,
+                pageSize);
     }
 
     @GetMapping(value = CAR_BRAND_ID)
     public CarBrandDTO getCarBrandById(@PathVariable("carBrandId") UUID carBrandId){
         return carBrandService.getCarBrandByID(carBrandId).orElseThrow(NotFoundException::new);
     }
-/*
-    @GetMapping(value = CAR_BRAND + "/{carBrandName}")
-    public CarBrandDTO getCarBrandByName(@PathVariable String carBrandName){
-        return ;
-    }
-*/
+
 }
 

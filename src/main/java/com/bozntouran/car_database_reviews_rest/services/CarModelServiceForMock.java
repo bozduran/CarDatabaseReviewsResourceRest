@@ -1,8 +1,9 @@
 package com.bozntouran.car_database_reviews_rest.services;
 
-import com.bozntouran.car_database_reviews_rest.model.CarBrandDTO;
 import com.bozntouran.car_database_reviews_rest.model.CarModelDTO;
 import lombok.Getter;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -24,8 +25,8 @@ public class CarModelServiceForMock implements CarModelService{
 
     }
     @Override
-    public List<CarModelDTO> getAllModels() {
-        return new ArrayList<>(this.carModelDTOMap.values());
+    public Page<CarModelDTO> getAllCarModels(String modelName, String drive, String fuelType, String transmision, String carType, Integer yearOfProduction, Integer pageNumber, Integer pageSize) {
+        return new PageImpl<>(new ArrayList<>(this.carModelDTOMap.values()));
     }
 
     @Override
@@ -36,5 +37,15 @@ public class CarModelServiceForMock implements CarModelService{
     @Override
     public Optional<CarModelDTO> getCarModelByID(UUID carModelID) {
         return null;
+    }
+
+    @Override
+    public boolean deleteCarModelByID(UUID carModelID) {
+        return false;
+    }
+
+    @Override
+    public void pattchCarModelByID(UUID carModelID, CarModelDTO carModelDTO) {
+
     }
 }
