@@ -59,9 +59,9 @@ public class CarModel {
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createdDate;
+
     @UpdateTimestamp
     private LocalDateTime updateDate;
-
 
     @ManyToOne()
     private CarBrand carBrand;

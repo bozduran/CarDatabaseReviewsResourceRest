@@ -28,6 +28,6 @@ public class CarBrandCSVImplTest {
         File carBrandsCSV = ResourceUtils.getFile("classpath:csvdata/car_brands.csv");
         List<CarBrandCSV> carBrandCSVList = carBrandCSVService.conevertCSV(carBrandsCSV);
 
-        assertThat(carBrandCSVList.size()).isEqualTo(74);
+        assertThat(carBrandCSVList.size()).isEqualTo(83);
     }
 }

@@ -40,7 +40,7 @@ public class CarModelServiceImp implements CarModelService{
 
         Page<CarModel> carModelPage;
 
-        //add ifs
+        //TODO: find better way to answer request
         if (modelName == null &&
                 drive == null &&
                 fuelType == null &&

@@ -1,6 +1,8 @@
 package com.bozntouran.car_database_reviews_rest.controller;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 
+import com.bozntouran.car_database_reviews_rest.config.SpringSecurityConfig;
 import com.bozntouran.car_database_reviews_rest.model.CarBrandDTO;
 import com.bozntouran.car_database_reviews_rest.services.CarBrandService;
 import com.bozntouran.car_database_reviews_rest.services.CarBrandServiceForMock;
@@ -14,6 +16,7 @@ import org.mockito.Captor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -34,13 +37,17 @@ import java.util.UUID;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 @Slf4j
 @WebMvcTest(CarBrandController.class)
+@Import(SpringSecurityConfig.class)
 class CarBrandControllerTest {
     private static final String CAR_BRAND = "/api/brand";
     private static final String CAR_BRAND_ID = CAR_BRAND + "/{carBrandId}";
+
+
 
     @Autowired
     CarBrandController carBrandController;
@@ -62,11 +69,16 @@ class CarBrandControllerTest {
     ArgumentCaptor<CarBrandDTO> carBrandDTOArgumentCaptor;
     @Captor
     ArgumentCaptor<UUID> UUIDArgumentCaptor;
+    
+    public static final String USERNAME = "user";
+    public static final String PASSWORD = "pass";
 
     @BeforeEach
     void setUp() {
         carBrandServiceForMock = new CarBrandServiceForMock();
-        mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
+        mockMvc = MockMvcBuilders.webAppContextSetup(wac)
+                .apply(springSecurity())
+                .build();
     }
 
     @Test
@@ -83,6 +95,7 @@ class CarBrandControllerTest {
         carBrandMap.put("brandName","Fiat");
 
         mockMvc.perform(patch(CAR_BRAND+"/"+carBrandDTO.getId())
+                        .with(httpBasic(USERNAME,PASSWORD))
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(carBrandDTO)))
@@ -102,7 +115,8 @@ class CarBrandControllerTest {
         carBrandDTO.setBrandName("Ferrari version");
 
         mockMvc.perform(put(CAR_BRAND+"/"+carBrandDTO.getId())
-                        .accept(MediaType.APPLICATION_JSON)
+                .with(httpBasic(USERNAME,PASSWORD))
+                .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(carBrandDTO)));
 
@@ -119,7 +133,8 @@ class CarBrandControllerTest {
                 .willReturn(carBrandServiceForMock.getAllBrands(null, null, null, 1, 10).getContent().get(1));
 
         mockMvc.perform(post(CAR_BRAND)
-                .accept(MediaType.APPLICATION_JSON)
+                        .with(httpBasic(USERNAME,PASSWORD))
+                        .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(carBrandDTO)))
                 .andExpect(status().isCreated())
@@ -132,16 +147,18 @@ class CarBrandControllerTest {
                 .willReturn(carBrandServiceForMock.getAllBrands(null, null, null, 1, 10));
 
         mockMvc.perform(get(CAR_BRAND)
+                        .with(httpBasic(USERNAME,PASSWORD))
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()",is(2)));
+                .andExpect(jsonPath("$.length()",is(11)));
     }
 
     @Test
     void getCarBrandByIDNotFound() throws Exception{
 
         given(carBrandServiceForMock.getCarBrandByID(any(UUID.class))).willReturn(Optional.empty());
-        mockMvc.perform(get(CAR_BRAND_ID,UUID.randomUUID()))
+        mockMvc.perform(get(CAR_BRAND_ID,UUID.randomUUID())
+                        .with(httpBasic(USERNAME,PASSWORD)))
                 .andExpect(status().isNotFound());
     }
     @Test
@@ -151,7 +168,8 @@ class CarBrandControllerTest {
         given(carBrandService.getCarBrandByID(any(UUID.class))  ).willReturn(Optional.of(carBrandDTO));
 
         mockMvc.perform(get(CAR_BRAND+"/"+UUID.randomUUID())
-                .accept(MediaType.APPLICATION_JSON))
+                        .with(httpBasic(USERNAME,PASSWORD))
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                         .andExpect(jsonPath("$.id",is(carBrandDTO.getId().toString()) ))

@@ -37,22 +37,23 @@ public class CarBrand {
     @NotNull
     @NotBlank
     private String brandName;
+
     @NotNull
     @NotBlank
     private String countryOfOrigin;
+
     @Min(value = 1800)
     private Integer yearOfFoundation;
 
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createdDate;
+
     @UpdateTimestamp
     private LocalDateTime updateDate;
 
-
-
     @Builder.Default
-    @OneToMany( mappedBy = "carBrand",cascade = CascadeType.PERSIST)
+    @OneToMany( mappedBy = "carBrand",cascade = CascadeType.ALL)
     private Set<CarModel> models = new HashSet<>();
 
 

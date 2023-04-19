@@ -13,10 +13,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.ArgumentMatchers.any;
 
 import java.util.List;
 import java.util.UUID;
@@ -86,14 +89,24 @@ public class CarModelControllerIT {
     @Transactional
     @Test
     void testDeleteByID(){
+        CarBrandDTO carBrandDTO = carBrandController.getAllCars(null,null,null,null,null).getContent().get(0);
+
+        carBrandController.deleteCarBrandByID(carBrandDTO.getId());
+
+        assertThrows(NotFoundException.class,()->{
+            carBrandController.getCarBrandById(carBrandDTO.getId());
+        });
+
 
     }
 
     @Test
     void testDeleteByIDNotFound() {
+
         assertThrows(NotFoundException.class, () -> {
             carBrandController.deleteCarBrandByID(UUID.randomUUID());
         });
+
     }
 
     @Test
