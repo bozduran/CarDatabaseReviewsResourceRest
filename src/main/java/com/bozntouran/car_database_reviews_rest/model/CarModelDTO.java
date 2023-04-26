@@ -5,7 +5,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -28,7 +27,7 @@ public class CarModelDTO implements Serializable {
 
     private String drive;
     private String fuelType;
-    private String transmision;
+    private String transmission;
     private String carType;
 
     private LocalDateTime createdDate;

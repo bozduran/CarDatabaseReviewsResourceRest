@@ -105,8 +105,8 @@ public class CarModelServiceImp implements CarModelService{
             if(carModelDTO.getDrive()!=null){
                 retrivedCarModel.setDrive(carModelDTO.getDrive());
             }
-            if(carModelDTO.getTransmision()!=null){
-                retrivedCarModel.setTransmision(carModelDTO.getTransmision());
+            if(carModelDTO.getTransmission()!=null){
+                retrivedCarModel.setTransmission(carModelDTO.getTransmission());
             }
             if(carModelDTO.getYearOfProduction()!=null){
                 retrivedCarModel.setYearOfProduction(carModelDTO.getYearOfProduction());

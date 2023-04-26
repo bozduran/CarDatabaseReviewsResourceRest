@@ -3,7 +3,6 @@ package com.bozntouran.car_database_reviews_rest.bootstrap;
 import com.bozntouran.car_database_reviews_rest.entities.CarBrand;
 import com.bozntouran.car_database_reviews_rest.entities.CarModel;
 import com.bozntouran.car_database_reviews_rest.mappers.CarBrandMapper;
-import com.bozntouran.car_database_reviews_rest.mappers.CarModelMapper;
 import com.bozntouran.car_database_reviews_rest.model.CarBrandCSV;
 import com.bozntouran.car_database_reviews_rest.model.CarBrandDTO;
 import com.bozntouran.car_database_reviews_rest.model.CarModelCSV;
@@ -15,8 +14,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
 
@@ -89,7 +86,7 @@ public class BootstrapData implements CommandLineRunner {
                         .fuelType(carModelCSV.getFuelType())
                         .yearOfProduction(carModelCSV.getYear())
                         .drive(carModelCSV.getDrive())
-                        .transmision(carModelCSV.getTrany())
+                        .transmission(carModelCSV.getTrany())
                         .carBrand(carBrand)
                         .build());
                 count++;

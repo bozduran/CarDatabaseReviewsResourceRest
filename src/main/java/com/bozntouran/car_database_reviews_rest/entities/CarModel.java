@@ -28,7 +28,7 @@ public class CarModel {
         this.yearOfProduction = yearOfProduction;
         this.drive = drive;
         this.fuelType = fuelType;
-        this.transmision = transmision;
+        this.transmission = transmision;
         this.carType = carType;
         this.createdDate = createdDate;
         this.updateDate = updateDate;
@@ -53,7 +53,7 @@ public class CarModel {
 
     private String drive;
     private String fuelType;
-    private String transmision;
+    private String transmission;
     private String carType;
 
     @CreationTimestamp

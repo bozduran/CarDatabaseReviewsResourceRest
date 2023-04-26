@@ -53,7 +53,7 @@ public class CarBrandServiceForMock implements CarBrandService{
 
     @Override
     public Optional<CarBrandDTO> getCarBrandByID(UUID id) {
-        return Optional.of(carBrandDTOMap.get(id));
+        return Optional.ofNullable(carBrandDTOMap.get(id));
     }
 
     @Override

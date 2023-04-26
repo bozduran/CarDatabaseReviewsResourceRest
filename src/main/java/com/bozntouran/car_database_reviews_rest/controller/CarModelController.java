@@ -69,19 +69,19 @@ public class CarModelController {
 
 
     @GetMapping(value = CAR_MODEL)
-    public Page<CarModelDTO> getAllCarModels(@RequestParam(required = false) String modelName,
-                                        @RequestParam(required = false) String drive,
-                                        @RequestParam(required = false) String fuelType,
-                                        @RequestParam(required = false) String transmision,
-                                        @RequestParam(required = false) String carType,
-                                        @RequestParam(required = false) Integer yearOfProduction,
-                                        @RequestParam(required = false) Integer pageNumber,
-                                        @RequestParam(required = false) Integer pageSize){
+    public Page<CarModelDTO> getCarModel(@RequestParam(required = false) String modelName,
+                                          @RequestParam(required = false) String drive,
+                                          @RequestParam(required = false) String fuelType,
+                                          @RequestParam(required = false) String transmission,
+                                          @RequestParam(required = false) String carType,
+                                          @RequestParam(required = false) Integer yearOfProduction,
+                                          @RequestParam(required = false) Integer pageNumber,
+                                          @RequestParam(required = false) Integer pageSize){
 
         return carModelService.getAllCarModels(modelName,
                 drive,
                 fuelType,
-                transmision,
+                transmission,
                 carType,
                 yearOfProduction,
                 pageNumber,pageSize);

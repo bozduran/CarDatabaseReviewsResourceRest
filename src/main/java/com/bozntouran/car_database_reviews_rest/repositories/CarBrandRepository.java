@@ -14,7 +14,7 @@ public interface CarBrandRepository extends JpaRepository<CarBrand, UUID> {
     CarBrand getCarBrandById(UUID id);
 
     boolean existsById(UUID id);
-    Page<CarBrand> getCarBrandByYearOfFoundation(Integer yearoffoundation, Pageable pageable);
+    Page<CarBrand> getCarBrandByYearOfFoundation(Integer yearOfFoundation, Pageable pageable);
     Page<CarBrand> getCarBrandByCountryOfOrigin(String countryOfOrigin, Pageable pageable);
     Page<CarBrand> getCarBrandByBrandName(String carBrandName, Pageable pageable);
 

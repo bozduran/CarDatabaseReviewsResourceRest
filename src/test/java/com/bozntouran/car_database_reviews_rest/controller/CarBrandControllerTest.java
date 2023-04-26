@@ -1,12 +1,9 @@
 package com.bozntouran.car_database_reviews_rest.controller;
 
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
-
 import com.bozntouran.car_database_reviews_rest.config.SpringSecurityConfig;
 import com.bozntouran.car_database_reviews_rest.model.CarBrandDTO;
 import com.bozntouran.car_database_reviews_rest.services.CarBrandService;
 import com.bozntouran.car_database_reviews_rest.services.CarBrandServiceForMock;
-import com.bozntouran.car_database_reviews_rest.services.CarBrandServiceImp;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,25 +15,23 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.any;
-
-
-
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -44,8 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(CarBrandController.class)
 @Import(SpringSecurityConfig.class)
 class CarBrandControllerTest {
-    private static final String CAR_BRAND = "/api/brand";
-    private static final String CAR_BRAND_ID = CAR_BRAND + "/{carBrandId}";
+
 
 
 
@@ -72,6 +66,18 @@ class CarBrandControllerTest {
     
     public static final String USERNAME = "user";
     public static final String PASSWORD = "pass";
+    private static final String CAR_BRAND = "/api/brand";
+    private static final String CAR_BRAND_ID = CAR_BRAND + "/{carBrandId}";
+
+    public static final SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor jwtRequestPostProcessor = jwt().jwt(jwt -> {
+        jwt.claims(claims -> {
+                    claims.put("scope", "message-read");
+                    claims.put("scope", "message-write");
+                })
+                .subject("messaging-client")
+                .notBefore(Instant.now().minusSeconds(5l));
+        });
+
 
     @BeforeEach
     void setUp() {
@@ -95,7 +101,7 @@ class CarBrandControllerTest {
         carBrandMap.put("brandName","Fiat");
 
         mockMvc.perform(patch(CAR_BRAND+"/"+carBrandDTO.getId())
-                        .with(httpBasic(USERNAME,PASSWORD))
+                        .with(jwtRequestPostProcessor)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(carBrandDTO)))
@@ -115,7 +121,7 @@ class CarBrandControllerTest {
         carBrandDTO.setBrandName("Ferrari version");
 
         mockMvc.perform(put(CAR_BRAND+"/"+carBrandDTO.getId())
-                .with(httpBasic(USERNAME,PASSWORD))
+                .with(jwtRequestPostProcessor)
                 .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(carBrandDTO)));
@@ -133,7 +139,7 @@ class CarBrandControllerTest {
                 .willReturn(carBrandServiceForMock.getAllBrands(null, null, null, 1, 10).getContent().get(1));
 
         mockMvc.perform(post(CAR_BRAND)
-                        .with(httpBasic(USERNAME,PASSWORD))
+                        .with(jwtRequestPostProcessor)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(carBrandDTO)))
@@ -147,7 +153,7 @@ class CarBrandControllerTest {
                 .willReturn(carBrandServiceForMock.getAllBrands(null, null, null, 1, 10));
 
         mockMvc.perform(get(CAR_BRAND)
-                        .with(httpBasic(USERNAME,PASSWORD))
+                        .with(jwtRequestPostProcessor)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()",is(11)));
@@ -158,8 +164,9 @@ class CarBrandControllerTest {
 
         given(carBrandServiceForMock.getCarBrandByID(any(UUID.class))).willReturn(Optional.empty());
         mockMvc.perform(get(CAR_BRAND_ID,UUID.randomUUID())
-                        .with(httpBasic(USERNAME,PASSWORD)))
+                        .with(jwtRequestPostProcessor))
                 .andExpect(status().isNotFound());
+
     }
     @Test
     void getCarBrandByID() throws Exception{
@@ -168,7 +175,7 @@ class CarBrandControllerTest {
         given(carBrandService.getCarBrandByID(any(UUID.class))  ).willReturn(Optional.of(carBrandDTO));
 
         mockMvc.perform(get(CAR_BRAND+"/"+UUID.randomUUID())
-                        .with(httpBasic(USERNAME,PASSWORD))
+                        .with(jwtRequestPostProcessor)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))

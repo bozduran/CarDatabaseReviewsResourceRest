@@ -63,10 +63,10 @@ public class CarBrandController {
 
     @GetMapping(value = CAR_BRAND)
     public Page<CarBrandDTO> getAllCars(@RequestParam(required = false) String brandName,
-                                        @RequestParam(required = false) String countryOfOrigin,
-                                        @RequestParam(required = false) Integer yearOfFoundation,
-                                        @RequestParam(required = false) Integer pageNumber,
-                                        @RequestParam(required = false) Integer pageSize){
+                                         @RequestParam(required = false) String countryOfOrigin,
+                                         @RequestParam(required = false) Integer yearOfFoundation,
+                                         @RequestParam(required = false) Integer pageNumber,
+                                         @RequestParam(required = false) Integer pageSize){
         return carBrandService.getAllBrands(brandName,
                 countryOfOrigin,
                 yearOfFoundation,
