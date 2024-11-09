@@ -1,6 +1,6 @@
 # CarDatabaseReviewsResourceRest
 (Not finished)
-A rest api resurce server in spring for car reviews writen in java and spring boot framework
+A rest api resurce server in spring for car reviews writen in java and spring framework
 
 <procedure title="See acompanied projects">
 <step>
